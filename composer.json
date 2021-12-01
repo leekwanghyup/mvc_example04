@@ -1,0 +1,15 @@
+{
+    "name": "lee/mvc_exe01",
+    "autoload": {
+        "psr-4": {
+            "app\\": "./"
+        }
+    },
+    "authors": [
+        {
+            "name": "leekwanghyup",
+            "email": "leekwanghyu@naver.com"
+        }
+    ],
+    "require": {}
+}
