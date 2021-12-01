@@ -7,7 +7,18 @@ use app\core\Application;
 include dirname(__DIR__).'/lib/test.lib.php';
 include dirname(__DIR__).'/vendor/autoload.php';
 
-$app = new Application(dirname(__DIR__)); 
+$dotenv = Dotenv\Dotenv::createMutable(dirname(__DIR__));
+$dotenv->load();
+
+$config = [
+    'db' => [
+        'dsn' => $_ENV['DB_DSN'], 
+        'user' => $_ENV['DB_USER'], 
+        'password' => $_ENV['DB_PASSWORD'], 
+    ]
+]; 
+
+$app = new Application(dirname(__DIR__), $config); 
 $app->router->get('/',[SiteController::class, 'home']);
 $app->router->get('/contact',[SiteController::class, 'contact']);
 $app->router->post('/contact',[SiteController::class, 'handleContact']);
