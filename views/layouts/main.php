@@ -1,3 +1,6 @@
+<?php 
+    use app\core\Application;
+?>
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -14,6 +17,11 @@
     <li><a href="/register">Register</a></li>
 </ul>
 <div>
+    <?php if(Application::$app->session->getFlash('success')): ?>
+        <div>
+            <?php echo Application::$app->session->getFlash('success') ?>    
+        </div>
+    <?php endif ?>
     {{contents}}
 </div>
 <footer>

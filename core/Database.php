@@ -73,4 +73,5 @@ class Database
     {
         echo '[ '.date('Y-m-d H:i:s'). ' ] - '.$message.PHP_EOL; 
     }
+    
 }

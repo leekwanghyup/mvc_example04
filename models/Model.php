@@ -1,6 +1,8 @@
 <?php 
 namespace app\models;
 
+use app\core\Application;
+
 abstract class Model
 {
     public const RULE_REQUIRED = 'required'; 
@@ -8,6 +10,7 @@ abstract class Model
     public const RULE_MIN = 'min';
     public const RULE_MAX = 'max'; 
     public const RULE_MATCH = 'match';
+    public const RULE_UNIQUE = 'unique';
 
     public array $errors = [];
 
@@ -32,6 +35,8 @@ abstract class Model
                 {
                     $ruleName = $rule[0]; 
                 }
+
+                # 유효성 검사 
                 if($ruleName === self::RULE_REQUIRED && !$value)
                 {
                     $this->addError($attribute, self::RULE_REQUIRED);
@@ -48,6 +53,20 @@ abstract class Model
                 }
                 if($ruleName === self::RULE_MATCH && $value !== $this->{$rule['match']}){ // $this->{$rule['match']}
                     $this->addError($attribute, self::RULE_MATCH, $rule);
+                }
+                if($ruleName === self::RULE_UNIQUE){
+                    $className = $rule['class'];  // 클래스 이름
+                    
+                    $uniqueAttr = $rule['attribute'] ?? $attribute; // 유니크 속성을 가진 컬럼
+                    $tableName = $className::tableName();  // 적용테이블 이름 
+                    
+                    $stmt = Application::$app->db->pdo->prepare("SELECT * FROM $tableName where $uniqueAttr = :attr ");
+                    $stmt->bindValue(":attr", $value); 
+                    $stmt->execute(); 
+                    $record = $stmt->fetchObject(); 
+                    if($record) { // 해당 레코드가 존재하는 경우 
+                        $this->addError($attribute, self::RULE_UNIQUE, $rule);
+                    }
                 }
             }
         } 
@@ -72,6 +91,7 @@ abstract class Model
             self::RULE_MIN => 'Min length of this field must be {min}', 
             self::RULE_MAX => 'Max length of this field must be {max}', 
             self::RULE_MATCH => 'This field must be the same as {match}', 
+            self::RULE_UNIQUE => 'Record with this {attribute} already exists', 
         ]; 
     }
 

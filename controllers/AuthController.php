@@ -1,6 +1,7 @@
 <?php 
 namespace app\controllers;
 
+use app\core\Application;
 use app\core\Request;
 use app\models\RegisterModel;
 
@@ -27,9 +28,9 @@ class AuthController extends Controller
         if($request->isPost()){
             $registerModel->dataload($request->getBody());
             
-
-            if($registerModel->validate() && $registerModel->register()){
-                return "Success";
+            if($registerModel->validate() && $registerModel->save()){
+                Application::$app->session->setFlash('success', 'Thank you for register');
+                Application::$app->response->redirect('/');
             }
             return $this->render('register',['model'=>$registerModel]);
         }
